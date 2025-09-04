@@ -19,3 +19,110 @@ O seu programa deverá cálcular corretamente os valores dos métodos da classe 
 
 ## Solução
 O código está pela metade, e você deverá dar continuidade obedecendo as regras descritas acima, para que no final, tenhamos um programa funcional. Procure pela palavra comentada "TODO" no código, em seguida, implemente conforme as regras acima.
+/HotelReserva
+ ├── Models
+ │   ├── Pessoa.cs
+ │   ├── Suite.cs
+ │   └── Reserva.cs
+ ├── Program.cs
+ └── HotelReserva.csproj
+namespace HotelReserva.Models
+{
+    public class Pessoa
+    {
+        public Pessoa(string nome, string sobrenome)
+        {
+            Nome = nome;
+            Sobrenome = sobrenome;
+        }
+
+        public string Nome { get; set; }
+        public string Sobrenome { get; set; }
+
+        public string NomeCompleto => $"{Nome} {Sobrenome}".ToUpper();
+    }
+}
+namespace HotelReserva.Models
+{
+    public class Suite
+    {
+        public Suite(string tipoSuite, int capacidade, decimal valorDiaria)
+        {
+            TipoSuite = tipoSuite;
+            Capacidade = capacidade;
+            ValorDiaria = valorDiaria;
+        }
+
+        public string TipoSuite { get; set; }
+        public int Capacidade { get; set; }
+        public decimal ValorDiaria { get; set; }
+    }
+}
+namespace HotelReserva.Models
+{
+    public class Reserva
+    {
+        public Reserva(int diasReservados)
+        {
+            DiasReservados = diasReservados;
+        }
+
+        public int DiasReservados { get; set; }
+        public List<Pessoa> Hospedes { get; set; } = new List<Pessoa>();
+        public Suite Suite { get; set; }
+
+        public void CadastrarHospedes(List<Pessoa> hospedes)
+        {
+            if (Suite != null && hospedes.Count <= Suite.Capacidade)
+            {
+                Hospedes = hospedes;
+            }
+            else
+            {
+                throw new Exception("A quantidade de hóspedes excede a capacidade da suíte.");
+            }
+        }
+
+        public void CadastrarSuite(Suite suite)
+        {
+            Suite = suite;
+        }
+
+        public int ObterQuantidadeHospedes()
+        {
+            return Hospedes.Count;
+        }
+
+        public decimal CalcularValorDiaria()
+        {
+            decimal valor = DiasReservados * Suite.ValorDiaria;
+
+            // Desconto de 10% para reservas acima de 10 dias
+            if (DiasReservados > 10)
+                valor *= 0.9M;
+
+            return valor;
+        }
+    }
+}
+﻿using HotelReserva.Models;
+
+// Cria os hóspedes
+List<Pessoa> hospedes = new List<Pessoa>()
+{
+    new Pessoa("Thayná", "Oliveira"),
+    new Pessoa("Maria", "Silva")
+};
+
+// Cria a suíte
+Suite suite = new Suite("Premium", 2, 100M);
+
+// Cria a reserva
+Reserva reserva = new Reserva(diasReservados: 12);
+reserva.CadastrarSuite(suite);
+reserva.CadastrarHospedes(hospedes);
+
+// Exibe informações
+Console.WriteLine($"Hóspedes: {reserva.ObterQuantidadeHospedes()}");
+Console.WriteLine($"Valor diária: {reserva.CalcularValorDiaria()}");
+dotnet new console -n HotelReserva
